@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: reactwebsite
-          image: lucasvilarinof/reactwebsite:v2.0.2
+          image: lucasvilarinof/reactwebsite:v1.0.0
           ports:
             - containerPort: 80
           securityContext:
