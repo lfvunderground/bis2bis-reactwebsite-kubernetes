@@ -1,0 +1,63 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: reactwebsite
+  namespace: default
+  labels:
+    allow.http: "false"
+    application: reactwebsite
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      application: reactwebsite
+  template:
+    metadata:
+      labels:
+        application: reactwebsite
+    spec:
+      containers:
+        - name: reactwebsite
+          image: lucasvilarinof/reactwebsite:v2.0.2
+          ports:
+            - containerPort: 80
+          securityContext:
+            privileged: true
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reactwebsite
+  # namespace: reactwebsite
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80 # Porta a ser exposta pelo SERVICE
+      targetPort: 80 # Porta que a aplicação está rodando no POD
+  selector:
+    application: reactwebsite
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: reactwebsite
+spec:
+  rules:
+    - host: www.homolog.vilit.com.br
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: reactwebsite
+                port:
+                  number: 80
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - www.homolog.vilit.com.br
+      secretName: homolog-vilit-com-br
